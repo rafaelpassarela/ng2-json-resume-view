@@ -197,3 +197,9 @@ node_modules/
 *.txt
 .vs/config/applicationhost.config
 .idea
+
+./*.map
+./*.js
+./**/*.js
+./**/*.map
+./npm-debug.log
