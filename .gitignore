@@ -203,3 +203,7 @@ node_modules/
 ./**/*.js
 ./**/*.map
 ./npm-debug.log
+*.map
+*.js
+**/*.map
+**/*.js
