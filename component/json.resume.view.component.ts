@@ -8,12 +8,14 @@ import {
     ComponentFactory,
     ModuleWithComponentFactories,
     ComponentRef,
-    ReflectiveInjector
+    ReflectiveInjector,
+    ViewChild    ,
+    
 } from '@angular/core';
 
 /* 
 references:
-http://stackoverflow.com/questions/31692416/dynamic-template-urls-in-angular-2
+http://stackoverflow.com/questions/40092639/how-to-render-a-dynamic-template-with-components-in-angular2
 https://plnkr.co/edit/27x0eg?p=preview
 */
 
@@ -36,6 +38,8 @@ export function createComponentFactory(compiler: Compiler, metadata: Component):
 })
 
 export class JsonResumeViewComponent {
+    //@ViewChild("placeholder", { read: ViewComponentRef }) placeholderRef: ViewComponentRef;
+
     @Input() templateFile: string = "";
     @Input() jsonFile: string = "";
 
@@ -88,15 +92,15 @@ export class JsonResumeViewComponent {
         }
 
         const compMetadata = new Component({
-            selector: 'json-resume-html',
+            selector: 'jsonresumeview-template',
             template: html,
         });
 
-        createComponentFactory(this.compiler, compMetadata)
-            .then(factory => {
-                const injector = ReflectiveInjector.fromResolvedProviders([], this.vcRef.parentInjector);
-                this.cmpRef = this.vcRef.createComponent(factory, 0, injector, []);
-            });
+        createComponentFactory(this.compiler, compMetadata).then(factory => {
+            const injector = ReflectiveInjector.fromResolvedProviders([], this.vcRef.parentInjector);
+            this.cmpRef = this.vcRef.createComponent(factory, 0, injector, []);
+        });
+
     }
 
     ngOnDestroy() {
