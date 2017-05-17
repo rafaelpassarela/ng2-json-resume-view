@@ -1,30 +1,32 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+//import { Component, ContentChildren, QueryList, Input, Output, EventEmitter, Directive, Inject, ElementRef } from '@angular/core';
+import { Component, Input, Output, Directive, ViewContainerRef } from '@angular/core';
+
+/* 
+references:
+http://stackoverflow.com/questions/31692416/dynamic-template-urls-in-angular-2
+*/
 
 @Component({
     selector: 'jsonresumeview',
-    template: `
-<b>Template: {{templateFile}}</b><br>
-<b>Json: {{jsonFile}}</b> <br>
-Text: {{meutexto}}
-    `
+    template: `<div id="#jsonresume"></div>`
 })
 
 export class JsonResumeViewComponent {
     @Input() templateFile: string = "";
     @Input() jsonFile: string = "";
 
-    private meutexto: string;
+    private jsonConten: string;
 
     constructor() {
-        // if (this.jsonFile != "") {
-        //     this.jsonLoad();
-        // }
+        
     }
 
     ngOnInit() {
         if (this.jsonFile != "") {
             this.jsonLoad();
         }
+
+
     }
 
     jsonLoad() {
@@ -33,7 +35,7 @@ export class JsonResumeViewComponent {
 
         var request = new XMLHttpRequest();
         request.onload = function (e) {
-            self.meutexto = request.responseText;
+            self.jsonConten = request.responseText;
         };
         request.open("get", self.jsonFile, true);
         request.send();
