@@ -1,47 +1,107 @@
-//import { Component, ContentChildren, QueryList, Input, Output, EventEmitter, Directive, Inject, ElementRef } from '@angular/core';
-import { Component, Input, Output, Directive, ViewContainerRef } from '@angular/core';
+import {
+    Component,
+    Directive,
+    NgModule,
+    Input,
+    ViewContainerRef,
+    Compiler,
+    ComponentFactory,
+    ModuleWithComponentFactories,
+    ComponentRef,
+    ReflectiveInjector
+} from '@angular/core';
 
 /* 
 references:
 http://stackoverflow.com/questions/31692416/dynamic-template-urls-in-angular-2
+https://plnkr.co/edit/27x0eg?p=preview
 */
+
+export function createComponentFactory(compiler: Compiler, metadata: Component): Promise<ComponentFactory<any>> {
+    const cmpClass = class DynamicComponent { };
+    const decoratedCmp = Component(metadata)(cmpClass);
+
+    @NgModule({ imports: [], declarations: [decoratedCmp] })
+    class DynamicHtmlModule { }
+
+    return compiler.compileModuleAndAllComponentsAsync(DynamicHtmlModule)
+        .then((moduleWithComponentFactory: ModuleWithComponentFactories<any>) => {
+            return moduleWithComponentFactory.componentFactories.find(x => x.componentType === decoratedCmp);
+        });
+}
 
 @Component({
     selector: 'jsonresumeview',
-    template: `<div id="#jsonresume"></div>`
+    template: `<div id="#jsonresume">NONE</div>`
 })
 
 export class JsonResumeViewComponent {
     @Input() templateFile: string = "";
     @Input() jsonFile: string = "";
 
-    private jsonConten: string;
+    cmpRef: ComponentRef<any>;
 
-    constructor() {
-        
-    }
+    private jsonContent: string;
+    private htmlContent: string;
+
+    constructor(private vcRef: ViewContainerRef, private compiler: Compiler) { }
 
     ngOnInit() {
+        // start async calls
         if (this.jsonFile != "") {
             this.jsonLoad();
         }
-
-
     }
 
     jsonLoad() {
-        // <JsonModels.JsonResume>JSON.parse(this.data);
         let self = this;
 
         var request = new XMLHttpRequest();
         request.onload = function (e) {
-            self.jsonConten = request.responseText;
+            self.jsonContent = request.responseText;
+            // another sync call
+            self.htmlLoad();
         };
         request.open("get", self.jsonFile, true);
         request.send();
     }
 
-    onLoadFile() {
+    htmlLoad() {
+        let self = this;
 
+        var request = new XMLHttpRequest();
+        request.onload = function (e) {
+            self.htmlContent = request.responseText;
+            self.bindHTML();
+        };
+        request.open("get", self.templateFile, true);
+        request.send();
+    }
+
+    bindHTML() {
+        const html = this.htmlContent;
+        if (html == "")
+            return;
+
+        if (this.cmpRef) {
+            this.cmpRef.destroy();
+        }
+
+        const compMetadata = new Component({
+            selector: 'json-resume-html',
+            template: html,
+        });
+
+        createComponentFactory(this.compiler, compMetadata)
+            .then(factory => {
+                const injector = ReflectiveInjector.fromResolvedProviders([], this.vcRef.parentInjector);
+                this.cmpRef = this.vcRef.createComponent(factory, 0, injector, []);
+            });
+    }
+
+    ngOnDestroy() {
+        if (this.cmpRef) {
+            this.cmpRef.destroy();
+        }
     }
 }
