@@ -105,3 +105,9 @@ export class JsonResume {
     interests: Array<Interest> = new Array<Interest>();
     references: Array<Reference> = new Array<Reference>();
 }
+
+export class JsonResumeViewTemplate {
+    jsonObject: JsonResume = new JsonResume();
+    jsonContent: string = "";
+    htmlContent: string = "";
+}
