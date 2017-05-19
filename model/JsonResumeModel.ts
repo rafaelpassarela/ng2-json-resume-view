@@ -15,7 +15,7 @@ export class Profile {
 export class Basics {
     name: string;
     label: string;
-    picture: string;
+    image: string;
     email: string;
     phone: string;
     website: string;
