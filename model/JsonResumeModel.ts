@@ -106,8 +106,8 @@ export class JsonResume {
     references: Array<Reference> = new Array<Reference>();
 }
 
-export class JsonResumeViewTemplate {
-    jsonObject: JsonResume = new JsonResume();
-    jsonContent: string = "";
-    htmlContent: string = "";
-}
+// export class JsonResumeViewTemplate {
+//     jsonObject: JsonResume = new JsonResume();
+//     jsonContent: string = "";
+//     htmlContent: string = "";
+// }
