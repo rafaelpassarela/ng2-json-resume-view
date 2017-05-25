@@ -18,6 +18,7 @@ export class Basics {
     image: string;
     email: string;
     phone: string;
+	phones: string[];
     website: string;
     summary: string;
     location: Location = new Location();
