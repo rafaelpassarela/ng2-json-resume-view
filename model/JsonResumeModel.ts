@@ -56,6 +56,7 @@ export class Education {
     endDate: string;
     gpa: string;
     picture: string;
+    location: string;
     courses: string[];
 }
 
