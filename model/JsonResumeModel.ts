@@ -10,6 +10,7 @@ export class Profile {
     network: string;
     username: string;
     url: string;
+    image: string;
 }
 
 export class Basics {
@@ -19,7 +20,7 @@ export class Basics {
     email: string;
     phone: string;
 	phones: string[];
-    website: string;
+    url: string;
     summary: string;
     location: Location = new Location();
     profiles: Array<Profile> = new Array<Profile>();
